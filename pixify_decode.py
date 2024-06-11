@@ -38,70 +38,42 @@ def decode(image):
    
     red=len(contours_red)
     yellow=len(contours_yellow)
+     
+    
 
-    img=image[85:620,80:620,:]
-    img[np.all(img == 0, axis=2)] = 255
 
-    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    ret,b_th=cv2.threshold(gray,30,255,cv2.THRESH_BINARY)
-    ret,r_b_th=cv2.threshold(gray,80,255,cv2.THRESH_BINARY)
-    ret,r_b_sh_th=cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
-    ret,r_b_sh_y_th=cv2.threshold(gray,250,255,cv2.THRESH_BINARY)
+  
+    square=0
+    for i in range(100,700,100):
+        for j in range(100,700,100):
+           
+            if i==600 or j==600:
+                continue
+            img=image[i+10:i+90,j+10:j+90]
+            gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+            _, threshold=cv2.threshold(gray,179,255,cv2.THRESH_BINARY_INV)
+            compare=np.full([80,80],0,dtype=np.uint8)
+            if not (compare==threshold).all():
+              square+=1
+  
 
-    # #red_box
-    # red=b_th-r_b_th
-    # red_contour,h=cv2.findContours(red,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-    # n_red=0
-    # for i in range(len(red_contour)):
-    #     a=int(cv2.contourArea(red_contour[i])/100)
-    #     n_red+=a
-
-    # #yellow box
-    # yellow=r_b_sh_th-r_b_sh_y_th
-    # yellow_contour,h=cv2.findContours(yellow,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-    # n_yellow=0
-    # for i in range(len(yellow_contour)):
-    #     a=int(cv2.contourArea(yellow_contour[i])/100)
-    #     n_yellow+=a
  
-
-    #shapes
-    shape=r_b_th-r_b_sh_th
-    kernel=np.array(np.ones((int(535/5),int(540/5))))
-    stride = (int(535/5),int(540/5))
-    n_shape=0
-    for y in range(0, 535, stride[0]):
-        for x in range(0,540 , stride[1]):
-            patch = shape[y:y + kernel.shape[0], x:x + kernel.shape[1]]
-            result = np.sum(patch * kernel)
-            if result!=0:
-                n_shape+=1
   
        
 
     ############ Enter your Code Here #################
-    # character_no = contours_red + 2*contours_yellow + n_shape
-    # if 1 <= character_no <= 26:
-    #     character = chr(96 + character_no)
-    # else: 
-    #     character=chr(character_no)
+    character=" "
+    character_no = red + 2*yellow + square
+    if 1 <= character_no <= 26:
+        character = chr(96 + character_no)
+    else: 
+        character=chr(character_no)
  
 
     
     
 
-    ############ Enter your Code Here #################
-    character = " "
-    character_no = red + 2*yellow + n_shape
-    alphabat="abcdefghijklmnopqrstuvwxyz"
-    # if character_no==32:
-    #     return ''
-    # if character_no>=1 and character_no<=26:
-    #     return alphabat[character_no-1]
-    if 1 <= character_no <= 26:
-      character = alphabat[character_no - 1]
-    else:
-      character = " "
+
     ###################################################
     return character
 
